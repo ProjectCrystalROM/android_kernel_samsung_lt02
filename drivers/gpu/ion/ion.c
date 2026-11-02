@@ -1180,6 +1180,26 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		ion_sync_for_device(client, &region);
 		break;
 	}
+	case ION_IOC_PHYS:
+	{
+		struct ion_phys_data data;
+		struct ion_handle *handle;
+		size_t len;
+		int ret;
+
+		if (copy_from_user(&data, (void __user *)arg, sizeof(data)))
+			return -EFAULT;
+		handle = ion_import_dma_buf(client, data.fd);
+		if (IS_ERR_OR_NULL(handle))
+			return handle ? PTR_ERR(handle) : -EINVAL;
+		ret = ion_phys(client, handle, &data.addr, &len);
+		ion_free(client, handle);
+		if (ret)
+			return ret;
+		if (copy_to_user((void __user *)arg, &data, sizeof(data)))
+			return -EFAULT;
+		break;
+	}
 	case ION_IOC_CUSTOM:
 	{
 		struct ion_device *dev = client->dev;

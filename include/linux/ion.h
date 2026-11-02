@@ -270,6 +270,12 @@ struct ion_fd_data {
 	int fd;
 };
 
+/* Stock Marvell userspace requests a physical address using a shared fd. */
+struct ion_phys_data {
+	int fd;
+	unsigned long addr;
+};
+
 /**
  * struct ion_handle_data - a handle passed to/from the kernel
  * @handle:	a handle
@@ -349,6 +355,8 @@ struct ion_custom_data {
  */
 struct ion_pxa_cache_region;
 #define ION_IOC_SYNC		_IOWR(ION_IOC_MAGIC, 7, struct ion_pxa_cache_region)
+
+#define ION_IOC_PHYS		_IOWR(ION_IOC_MAGIC, 9, struct ion_phys_data)
 
 /**
  * DOC: ION_IOC_CUSTOM - call architecture specific ion ioctl
